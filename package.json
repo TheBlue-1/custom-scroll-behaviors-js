@@ -1,0 +1,16 @@
+{
+  "name": "scroll",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "rimraf ./target && tsc",
+    "start": "npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.3"
+  }
+}
