@@ -8,11 +8,23 @@
             box-sizing: border-box;
         }
     </style>
+    <script>
+    //ScrollElementsConfig
+    </script>
 </head>
 
 <body style="height: 2000px;">
 
     <div style="background-color: black;width: 100vw;height: 100vh; position: fixed;">
-        <visibility-scroll-behavior start="0px" end="1000px" startOpacity="1" endOpacity="0" />
+
+        <visibility-scroll-behavior start="0px" end="1000px" start-opacity="1" end-opacity="0" />
+    </div>
+    <div
+        style="background-color: black;width: 10vw;height: 10vw; position: fixed;top: calc(50vh - 5vw) ;left:45vw;border-radius: 50%;">
+        <visibility-scroll-behavior start="500px" end="1000px" start-opacity="0" end-opacity="1" />
+    </div>
+    <div
+        style="background-color: white;width: 10vw;height: 10vw; position: fixed;top: calc(50vh - 5vw) ;left:45vw;border-radius: 50%;">
+        <visibility-scroll-behavior start="0px" end="500px" start-opacity="1" end-opacity="0" />
     </div>
 </body>
