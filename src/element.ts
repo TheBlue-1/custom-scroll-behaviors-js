@@ -224,6 +224,45 @@ customElements.define(
   "vertical-scroll-behavior",
   VerticalMovementBehaviourElement
 );
+export class HorizontalMovementBehaviourElement extends ScrollBehaviorElement {
+  protected readonly attributeName: keyof Omit<
+    CSSStyleDeclaration,
+    | "length"
+    | "parentRule"
+    | "getPropertyPriority"
+    | "getPropertyValue"
+    | "item"
+    | "removeProperty"
+    | "setProperty"
+  > = "left";
+  protected readonly unit: string = "px";
+
+  protected computedEndValue: number | undefined;
+  protected computedStartValue: number | undefined;
+
+  //position of the element after scroll
+  protected get endPos() {
+    return this.getAttributeByName(Attributes.EndPos);
+  }
+
+  //position of the element before scroll
+  protected get startPos() {
+    return this.getAttributeByName(Attributes.StartPos);
+  }
+
+  protected computeValues(): void {
+    this.computedStartValue = this.startPos
+      ? this.stringToPx(this.startPos)
+      : undefined;
+    this.computedEndValue = this.endPos
+      ? this.stringToPx(this.endPos)
+      : undefined;
+  }
+}
+customElements.define(
+  "horizontal-scroll-behavior",
+  HorizontalMovementBehaviourElement
+);
 export class VisibilityBehaviourElement extends ScrollBehaviorElement {
   protected readonly attributeName: keyof Omit<
     CSSStyleDeclaration,
