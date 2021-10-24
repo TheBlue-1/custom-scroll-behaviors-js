@@ -1,10 +1,10 @@
 //if a setting is set to a function the function will be called each scroll event
 export const ScrollElementsConfig: Config = {
-  //if set to true the html attributes of the behavior elements will be read at each scroll event. otherwise they will only be read once.
-  alwaysCheckAttributes: false,
+  //just a sample because an empty class wouldn't work out with the typings
+  sampleSetting: false,
 };
 export class CurrentConfig {
-  public alwaysCheckAttributes: boolean = false;
+  public sampleSetting: boolean = false;
 }
 export type Config = {
   [Property in keyof CurrentConfig]:

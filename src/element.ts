@@ -1,9 +1,16 @@
 import { scrollHandler } from './scroll-handler.js';
 
+export enum Attributes {
+  Speed = "speed",
+  End = "end",
+  Start = "start",
+  EndPos = "end-pos",
+  StartPos = "start-pos",
+  EndOpacity = "end-opacity",
+  StartOpacity = "start-opacity",
+}
 export abstract class ScrollBehaviorElement extends HTMLElement {
-  //attributeChangedCallback
-  //observedAttributes
-  private attributesCache: { [Property in string]: string | null } = {};
+  private attributesCache: { [Property in Attributes]?: string | null } = {};
 
   protected abstract readonly attributeName: keyof Omit<
     CSSStyleDeclaration,
@@ -31,9 +38,13 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     scrollHandler.addBehavior(this);
   }
 
+  public static get observedAttributes() {
+    return Object.keys(Attributes).map((k) => (<any>Attributes)[k]);
+  }
+
   //end scroll position
   protected get end() {
-    return this.getAttributeByName("end");
+    return this.getAttributeByName(Attributes.End);
   }
 
   protected get scrollPosition() {
@@ -43,12 +54,12 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   //multiplier for scroll position change
   //for opacity 1% per pixel
   protected get speed() {
-    return this.getAttributeByName("speed");
+    return this.getAttributeByName(Attributes.Speed);
   }
 
   //start scroll position
   protected get start() {
-    return this.getAttributeByName("start");
+    return this.getAttributeByName(Attributes.Start);
   }
 
   public adjust(element: HTMLElement): void {
@@ -80,18 +91,17 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.unit;
   }
 
-  protected getAttributeByName(name: string): string | null {
-    if (
-      scrollHandler.config.alwaysCheckAttributes ||
-      !this.attributesCache.hasOwnProperty(name)
-    ) {
-      const value = this.getAttribute(name);
+  public attributeChangedCallback(
+    name: Attributes,
+    oldValue: string,
+    newValue: string
+  ) {
+    console.log(name);
 
-      this.attributesCache[name] = value;
+    this.attributesCache[name] = newValue;
+  }
 
-      return value;
-    }
-
+  protected getAttributeByName(name: Attributes): string | null | undefined {
     return this.attributesCache[name];
   }
 
@@ -193,12 +203,12 @@ export class VerticalMovementBehaviourElement extends ScrollBehaviorElement {
 
   //position of the element after scroll
   protected get endPos() {
-    return this.getAttributeByName("end-pos");
+    return this.getAttributeByName(Attributes.EndPos);
   }
 
   //position of the element before scroll
   protected get startPos() {
-    return this.getAttributeByName("start-pos");
+    return this.getAttributeByName(Attributes.StartPos);
   }
 
   protected computeValues(): void {
@@ -232,12 +242,12 @@ export class VisibilityBehaviourElement extends ScrollBehaviorElement {
 
   //opacity of the element after scroll
   protected get endOpacity() {
-    return this.getAttributeByName("end-opacity");
+    return this.getAttributeByName(Attributes.EndOpacity);
   }
 
   //opacity of the element before scroll
   protected get startOpacity() {
-    return this.getAttributeByName("start-opacity");
+    return this.getAttributeByName(Attributes.StartOpacity);
   }
 
   protected computeValues(): void {
