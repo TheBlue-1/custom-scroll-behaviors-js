@@ -97,8 +97,6 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     oldValue: string,
     newValue: string
   ) {
-    console.log(name);
-
     this.attributesCache[name] = newValue;
   }
 
@@ -115,6 +113,9 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     }
     if (unit == "vh") {
       return (window.innerHeight * +val) / 100;
+    }
+    if (unit == "vw") {
+      return (window.innerWidth * +val) / 100;
     }
 
     throw "Incorrect value given: " + value;
