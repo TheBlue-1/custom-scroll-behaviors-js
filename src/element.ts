@@ -9,19 +9,20 @@ export enum Attributes {
   EndOpacity = "end-opacity",
   StartOpacity = "start-opacity",
 }
+export type CssAttributes = keyof Omit<
+  CSSStyleDeclaration,
+  | "length"
+  | "parentRule"
+  | "getPropertyPriority"
+  | "getPropertyValue"
+  | "item"
+  | "removeProperty"
+  | "setProperty"
+>;
 export abstract class ScrollBehaviorElement extends HTMLElement {
   private attributesCache: { [Property in Attributes]?: string | null } = {};
 
-  protected abstract readonly attributeName: keyof Omit<
-    CSSStyleDeclaration,
-    | "length"
-    | "parentRule"
-    | "getPropertyPriority"
-    | "getPropertyValue"
-    | "item"
-    | "removeProperty"
-    | "setProperty"
-  >;
+  protected abstract readonly attributeName: CssAttributes;
   protected abstract readonly unit: string;
 
   protected computedEnd: number | undefined;
@@ -186,16 +187,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   }
 }
 export class VerticalMovementBehaviourElement extends ScrollBehaviorElement {
-  protected readonly attributeName: keyof Omit<
-    CSSStyleDeclaration,
-    | "length"
-    | "parentRule"
-    | "getPropertyPriority"
-    | "getPropertyValue"
-    | "item"
-    | "removeProperty"
-    | "setProperty"
-  > = "top";
+  protected readonly attributeName: CssAttributes = "top";
   protected readonly unit: string = "px";
 
   protected computedEndValue: number | undefined;
@@ -225,16 +217,7 @@ customElements.define(
   VerticalMovementBehaviourElement
 );
 export class HorizontalMovementBehaviourElement extends ScrollBehaviorElement {
-  protected readonly attributeName: keyof Omit<
-    CSSStyleDeclaration,
-    | "length"
-    | "parentRule"
-    | "getPropertyPriority"
-    | "getPropertyValue"
-    | "item"
-    | "removeProperty"
-    | "setProperty"
-  > = "left";
+  protected readonly attributeName: CssAttributes = "left";
   protected readonly unit: string = "px";
 
   protected computedEndValue: number | undefined;
@@ -264,16 +247,7 @@ customElements.define(
   HorizontalMovementBehaviourElement
 );
 export class VisibilityBehaviourElement extends ScrollBehaviorElement {
-  protected readonly attributeName: keyof Omit<
-    CSSStyleDeclaration,
-    | "length"
-    | "parentRule"
-    | "getPropertyPriority"
-    | "getPropertyValue"
-    | "item"
-    | "removeProperty"
-    | "setProperty"
-  > = "opacity";
+  protected readonly attributeName: CssAttributes = "opacity";
   protected readonly unit: string = "";
 
   protected computedEndValue: number | undefined;
