@@ -12,7 +12,6 @@ class ScrollHandler {
     window.addEventListener("scroll", () => this.adjust());
     window.addEventListener("resize", () => this.onResize());
     document.addEventListener("DOMContentLoaded", () => this.onResize());
-    this.onResize();
   }
 
   public static get instance(): ScrollHandler {
