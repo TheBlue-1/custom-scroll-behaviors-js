@@ -22,36 +22,36 @@ customScroll.toPx = (val) => {
 customScroll.adjust = () => {
   for (let i = 0; i < customScroll.elements.length; i++) {
     let sElem = customScroll.elements[i];
-    let behaviours = sElem.currentOrNextOrLastBehaviour();
-    if (behaviours[0]) {
-      behaviour = behaviours[0];
+    let behaviors = sElem.currentOrNextOrLastBehavior();
+    if (behaviors[0]) {
+      behavior = behaviors[0];
       sElem.elem.style.transform =
         "translateY(" +
-        (behaviour.pxStartPos +
-          (window.scrollY - behaviour.pxStart) * behaviour.speed) +
+        (behavior.pxStartPos +
+          (window.scrollY - behavior.pxStart) * behavior.speed) +
         "px)";
-      if (behaviour.opacityBefore != null && behaviour.opacityAfter != null) {
+      if (behavior.opacityBefore != null && behavior.opacityAfter != null) {
         sElem.elem.style.opacity =
-          ((window.scrollY - behaviour.pxStart) /
-            (behaviour.pxEnd - behaviour.pxStart)) *
-            (behaviour.opacityAfter - behaviour.opacityBefore) +
-          behaviour.opacityBefore;
+          ((window.scrollY - behavior.pxStart) /
+            (behavior.pxEnd - behavior.pxStart)) *
+            (behavior.opacityAfter - behavior.opacityBefore) +
+          behavior.opacityBefore;
       }
-    } else if (behaviours[1]) {
-      behaviour = behaviours[1];
-      sElem.elem.style.transform = "translateY(" + behaviour.pxStartPos + "px)";
-      if (behaviour.opacityBefore != null) {
-        sElem.elem.style.opacity = behaviour.opacityBefore;
+    } else if (behaviors[1]) {
+      behavior = behaviors[1];
+      sElem.elem.style.transform = "translateY(" + behavior.pxStartPos + "px)";
+      if (behavior.opacityBefore != null) {
+        sElem.elem.style.opacity = behavior.opacityBefore;
       }
     } else {
-      behaviour = behaviours[2];
+      behavior = behaviors[2];
       sElem.elem.style.transform =
         "translateY(" +
-        (behaviour.pxStartPos +
-          (behaviour.pxEnd - behaviour.pxStart) * behaviour.speed) +
+        (behavior.pxStartPos +
+          (behavior.pxEnd - behavior.pxStart) * behavior.speed) +
         "px)";
-      if (behaviour.opacityAfter != null) {
-        sElem.elem.style.opacity = behaviour.opacityAfter;
+      if (behavior.opacityAfter != null) {
+        sElem.elem.style.opacity = behavior.opacityAfter;
       }
     }
   }
@@ -59,8 +59,8 @@ customScroll.adjust = () => {
 customScroll.onResize = (setPx = true) => {
   let height = 0;
   for (let i = 0; i < customScroll.elements.length; i++) {
-    for (let j = 0; j < customScroll.elements[i].behaviours.length; j++) {
-      let b = customScroll.elements[i].behaviours[j];
+    for (let j = 0; j < customScroll.elements[i].behaviors.length; j++) {
+      let b = customScroll.elements[i].behaviors[j];
       if (setPx) b.resetPxs();
       if (b.pxEnd > height) height = b.pxEnd;
     }
@@ -71,48 +71,48 @@ customScroll.onResize = (setPx = true) => {
 window.addEventListener("scroll", customScroll.adjust);
 window.addEventListener("resize", customScroll.onResize);
 class OldScrollElement {
-  behaviours = [];
+  behaviors = [];
   elem;
   constructor(elem) {
     this.elem = elem;
     customScroll.elements.push(this);
   }
-  addBehaviour(behaviour) {
-    this.behaviours.push(behaviour);
+  addBehavior(behavior) {
+    this.behaviors.push(behavior);
     customScroll.onResize(false);
     return this;
   }
   opacityAt(pos, fromopacity, toopacity, elementPos = 0) {
-    this.addBehaviour(
-      new PositionBehaviour(pos, pos, 1, elementPos, fromopacity, toopacity)
+    this.addBehavior(
+      new PositionBehavior(pos, pos, 1, elementPos, fromopacity, toopacity)
     );
     return this;
   }
-  currentOrNextOrLastBehaviour() {
+  currentOrNextOrLastBehavior() {
     let scrollPos = window.scrollY;
     let next = undefined;
     let last = undefined;
-    for (let i = 0; i < this.behaviours.length; i++) {
-      let behaviour = this.behaviours[i];
-      if (scrollPos >= behaviour.pxStart && scrollPos <= behaviour.pxEnd) {
-        return [behaviour, undefined, undefined];
+    for (let i = 0; i < this.behaviors.length; i++) {
+      let behavior = this.behaviors[i];
+      if (scrollPos >= behavior.pxStart && scrollPos <= behavior.pxEnd) {
+        return [behavior, undefined, undefined];
       }
       if (
-        scrollPos < behaviour.pxStart &&
-        (!next || next.pxStart > behaviour.pxStart)
+        scrollPos < behavior.pxStart &&
+        (!next || next.pxStart > behavior.pxStart)
       )
-        next = behaviour;
+        next = behavior;
       if (
         !next &&
-        scrollPos > behaviour.pxEnd &&
-        (!last || last.pxEnd < behaviour.pxEnd)
+        scrollPos > behavior.pxEnd &&
+        (!last || last.pxEnd < behavior.pxEnd)
       )
-        last = behaviour;
+        last = behavior;
     }
     return [undefined, next, last];
   }
 }
-class PositionBehaviour {
+class PositionBehavior {
   start;
   end;
   speed;

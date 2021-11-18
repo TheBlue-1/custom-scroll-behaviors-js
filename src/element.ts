@@ -187,7 +187,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     }
   }
 }
-export class VerticalMovementBehaviourElement extends ScrollBehaviorElement {
+export class VerticalMovementBehaviorElement extends ScrollBehaviorElement {
   protected readonly attributeName: CssAttributes = "top";
   protected readonly unit: string = "px";
 
@@ -215,9 +215,9 @@ export class VerticalMovementBehaviourElement extends ScrollBehaviorElement {
 }
 customElements.define(
   "vertical-scroll-behavior",
-  VerticalMovementBehaviourElement
+  VerticalMovementBehaviorElement
 );
-export class HorizontalMovementBehaviourElement extends ScrollBehaviorElement {
+export class HorizontalMovementBehaviorElement extends ScrollBehaviorElement {
   protected readonly attributeName: CssAttributes = "left";
   protected readonly unit: string = "px";
 
@@ -245,9 +245,9 @@ export class HorizontalMovementBehaviourElement extends ScrollBehaviorElement {
 }
 customElements.define(
   "horizontal-scroll-behavior",
-  HorizontalMovementBehaviourElement
+  HorizontalMovementBehaviorElement
 );
-export class VisibilityBehaviourElement extends ScrollBehaviorElement {
+export class VisibilityBehaviorElement extends ScrollBehaviorElement {
   protected readonly attributeName: CssAttributes = "opacity";
   protected readonly unit: string = "";
 
@@ -271,4 +271,4 @@ export class VisibilityBehaviourElement extends ScrollBehaviorElement {
     this.computedEndValue = this.endOpacity ? +this.endOpacity : undefined;
   }
 }
-customElements.define("visibility-scroll-behavior", VisibilityBehaviourElement);
+customElements.define("visibility-scroll-behavior", VisibilityBehaviorElement);
