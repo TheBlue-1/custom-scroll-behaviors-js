@@ -11,13 +11,7 @@ export enum Attributes {
 }
 export type CssAttributes = keyof Omit<
   CSSStyleDeclaration,
-  | "length"
-  | "parentRule"
-  | "getPropertyPriority"
-  | "getPropertyValue"
-  | "item"
-  | "removeProperty"
-  | "setProperty"
+  "length" | "parentRule" | "getPropertyPriority" | "getPropertyValue" | "item" | "removeProperty" | "setProperty"
 >;
 export abstract class ScrollBehaviorElement extends HTMLElement {
   private attributesCache: { [Property in Attributes]?: string | null } = {};
@@ -41,6 +35,14 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
 
   public static get observedAttributes() {
     return Object.keys(Attributes).map((k) => (<any>Attributes)[k]);
+  }
+
+  public get minimumScroll() {
+    this.computeRange();
+    if (this.computedEnd == undefined || this.computedStart == undefined) {
+      throw "error";
+    }
+    return this.computedEnd > this.computedStart ? this.computedEnd : this.computedStart;
   }
 
   //end scroll position
@@ -74,9 +76,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       throw "error";
     }
 
-    this.percentage =
-      (this.scrollPosition - this.computedStart) /
-      (this.computedEnd - this.computedStart);
+    this.percentage = (this.scrollPosition - this.computedStart) / (this.computedEnd - this.computedStart);
 
     if (this.percentage <= 0) {
       element.style[this.attributeName] = this.computedStartValue + this.unit;
@@ -87,16 +87,10 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       return;
     }
     element.style[this.attributeName] =
-      this.computedStartValue +
-      this.percentage * (this.computedEndValue - this.computedStartValue) +
-      this.unit;
+      this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue) + this.unit;
   }
 
-  public attributeChangedCallback(
-    name: Attributes,
-    oldValue: string,
-    newValue: string
-  ) {
+  public attributeChangedCallback(name: Attributes, oldValue: string, newValue: string) {
     this.attributesCache[name] = newValue;
   }
 
@@ -144,11 +138,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      this.computedEnd =
-        (this.computedEndValue -
-          this.computedStartValue +
-          this.computedStart * +this.speed) /
-        +this.speed;
+      this.computedEnd = (this.computedEndValue - this.computedStartValue + this.computedStart * +this.speed) / +this.speed;
     }
     if (
       this.computedEndValue != undefined &&
@@ -157,11 +147,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart == undefined &&
       this.speed != null
     ) {
-      this.computedStart =
-        (this.computedEnd * +this.speed -
-          this.computedEndValue -
-          this.computedStartValue) /
-        +this.speed;
+      this.computedStart = (this.computedEnd * +this.speed - this.computedEndValue - this.computedStartValue) / +this.speed;
     }
     if (
       this.computedEndValue == undefined &&
@@ -170,9 +156,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      this.computedEndValue =
-        this.computedStartValue -
-        (this.computedEnd - this.computedStart) * +this.speed;
+      this.computedEndValue = this.computedStartValue - (this.computedEnd - this.computedStart) * +this.speed;
     }
     if (
       this.computedEndValue != undefined &&
@@ -181,9 +165,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      this.computedStartValue =
-        this.computedEndValue +
-        (this.computedEnd - this.computedStart) * +this.speed;
+      this.computedStartValue = this.computedEndValue + (this.computedEnd - this.computedStart) * +this.speed;
     }
   }
 }
@@ -205,18 +187,11 @@ export class VerticalMovementBehaviorElement extends ScrollBehaviorElement {
   }
 
   protected computeValues(): void {
-    this.computedStartValue = this.startPos
-      ? this.stringToPx(this.startPos)
-      : undefined;
-    this.computedEndValue = this.endPos
-      ? this.stringToPx(this.endPos)
-      : undefined;
+    this.computedStartValue = this.startPos ? this.stringToPx(this.startPos) : undefined;
+    this.computedEndValue = this.endPos ? this.stringToPx(this.endPos) : undefined;
   }
 }
-customElements.define(
-  "vertical-scroll-behavior",
-  VerticalMovementBehaviorElement
-);
+customElements.define("vertical-scroll-behavior", VerticalMovementBehaviorElement);
 export class HorizontalMovementBehaviorElement extends ScrollBehaviorElement {
   protected readonly attributeName: CssAttributes = "left";
   protected readonly unit: string = "px";
@@ -235,18 +210,11 @@ export class HorizontalMovementBehaviorElement extends ScrollBehaviorElement {
   }
 
   protected computeValues(): void {
-    this.computedStartValue = this.startPos
-      ? this.stringToPx(this.startPos)
-      : undefined;
-    this.computedEndValue = this.endPos
-      ? this.stringToPx(this.endPos)
-      : undefined;
+    this.computedStartValue = this.startPos ? this.stringToPx(this.startPos) : undefined;
+    this.computedEndValue = this.endPos ? this.stringToPx(this.endPos) : undefined;
   }
 }
-customElements.define(
-  "horizontal-scroll-behavior",
-  HorizontalMovementBehaviorElement
-);
+customElements.define("horizontal-scroll-behavior", HorizontalMovementBehaviorElement);
 export class VisibilityBehaviorElement extends ScrollBehaviorElement {
   protected readonly attributeName: CssAttributes = "opacity";
   protected readonly unit: string = "";
@@ -265,9 +233,7 @@ export class VisibilityBehaviorElement extends ScrollBehaviorElement {
   }
 
   protected computeValues(): void {
-    this.computedStartValue = this.startOpacity
-      ? +this.startOpacity
-      : undefined;
+    this.computedStartValue = this.startOpacity ? +this.startOpacity : undefined;
     this.computedEndValue = this.endOpacity ? +this.endOpacity : undefined;
   }
 }

@@ -11,6 +11,8 @@ class ScrollHandler {
     this.config = getCurrentConfig();
     window.addEventListener("scroll", () => this.adjust());
     window.addEventListener("resize", () => this.onResize());
+    document.addEventListener("DOMContentLoaded", () => this.onResize());
+    this.onResize();
   }
 
   public static get instance(): ScrollHandler {
@@ -37,7 +39,18 @@ class ScrollHandler {
     });
   }
 
-  public onResize(): void {}
+  public onResize(): void {
+    if (!getCurrentConfig().autoSizePage) return;
+    let minimumScroll = 0;
+    this.elements.forEach((e) => {
+      const elementsMinimumScroll = e.minimumScroll;
+      if (elementsMinimumScroll > minimumScroll) {
+        minimumScroll = elementsMinimumScroll;
+      }
+    });
+    document.body.style.height = `calc(${minimumScroll}px + 100vh)`;
+    this.adjust();
+  }
 }
 
 class ScrollElement {
@@ -45,9 +58,21 @@ class ScrollElement {
 
   constructor(public element: HTMLElement) {}
 
+  public get minimumScroll() {
+    let minimumScroll = 0;
+    this.behaviors.forEach((b) => {
+      const behaviorsMinimumScroll = b.minimumScroll;
+      if (behaviorsMinimumScroll > minimumScroll) {
+        minimumScroll = behaviorsMinimumScroll;
+      }
+    });
+    return minimumScroll;
+  }
+
   public adjust() {
     this.behaviors.forEach((b) => b.adjust(this.element));
   }
 }
+
 //interfering behaviors will be overridden by the last one
 export const scrollHandler = ScrollHandler.instance;
