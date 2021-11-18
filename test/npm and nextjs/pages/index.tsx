@@ -1,9 +1,11 @@
-import * as X from 'custom-scroll-behaviors';
+import React from 'react';
+
 
 import type { NextPage } from 'next'
-X//init elements
 const Home: NextPage = () => {
-  return (
+    React.useEffect(() => {import("custom-scroll-behaviors")}
+    , [])
+  return (  
     <div>
     <div style={{height: "2000px"}}>
 
