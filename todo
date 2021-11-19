@@ -1,5 +1,6 @@
 way to say minus size (vertical movement: 100px - own size (10vw)) could be an attribute or syntax
 infinity repeat
-npm
 custom element
 multi element for things like colors that need 3 things changed
+animation types (ease)
+js only approach
