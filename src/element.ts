@@ -24,9 +24,9 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   protected abstract readonly unit: string;
 
   protected computedEnd: number | undefined;
-  protected abstract computedEndValue: number | undefined;
+  protected abstract computedEndValue: number | number[] | undefined;
   protected computedStart: number | undefined;
-  protected abstract computedStartValue: number | undefined;
+  protected abstract computedStartValue: number | number[] | undefined;
   // negative: before behavior
   // 0-1: behavior percentage
   // above 1: after behavior
@@ -52,6 +52,22 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   //end scroll position
   protected get end() {
     return this.getAttributeByName(Attributes.End);
+  }
+
+  protected get firstComputedEndValue(): number {
+    if (!this.computedEndValue) throw "error";
+    if (Array.isArray(this.computedEndValue)) {
+      return this.computedEndValue[0];
+    }
+    return this.computedEndValue;
+  }
+
+  protected get firstComputedStartValue(): number {
+    if (!this.computedStartValue) throw "error";
+    if (Array.isArray(this.computedStartValue)) {
+      return this.computedStartValue[0];
+    }
+    return this.computedStartValue;
   }
 
   protected get scrollPosition() {
@@ -90,8 +106,12 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       element.style[this.attributeName] = this.computedEndValue + this.unit;
       return;
     }
-    element.style[this.attributeName] =
-      this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue) + this.unit;
+    if (!Array.isArray(this.computedStartValue) && !Array.isArray(this.computedEndValue))
+      element.style[this.attributeName] =
+        this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue) + this.unit;
+    else {
+      element.style[this.attributeName] = this.multiToSingleValue();
+    }
   }
 
   public attributeChangedCallback(name: Attributes, oldValue: string, newValue: string) {
@@ -100,6 +120,18 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
 
   protected getAttributeByName(name: Attributes): string | null | undefined {
     return this.attributesCache[name];
+  }
+
+  protected multiToSingleValue(): string {
+    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue) || !this.percentage) throw "error";
+    if (this.computedStartValue.length != this.computedEndValue.length) throw "error";
+    let result = "";
+    for (let i = 0; i < this.computedStartValue.length; i++) {
+      result += this.computedStartValue[i] + this.percentage * (this.computedEndValue[i] - this.computedStartValue[i]);
+    }
+
+    result += this.unit;
+    return result;
   }
 
   protected stringToPx(value: string): number {
@@ -142,7 +174,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      this.computedEnd = (this.computedEndValue - this.computedStartValue + this.computedStart * +this.speed) / +this.speed;
+      this.computedEnd = (this.firstComputedEndValue - this.firstComputedStartValue + this.computedStart * +this.speed) / +this.speed;
     }
     if (
       this.computedEndValue != undefined &&
@@ -151,7 +183,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart == undefined &&
       this.speed != null
     ) {
-      this.computedStart = (this.computedEnd * +this.speed - this.computedEndValue - this.computedStartValue) / +this.speed;
+      this.computedStart = (this.computedEnd * +this.speed - this.firstComputedEndValue - this.firstComputedStartValue) / +this.speed;
     }
     if (
       this.computedEndValue == undefined &&
@@ -160,7 +192,8 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      this.computedEndValue = this.computedStartValue - (this.computedEnd - this.computedStart) * +this.speed;
+      this.computedEndValue = this.firstComputedStartValue - (this.computedEnd - this.computedStart) * +this.speed;
+      //todo array case
     }
     if (
       this.computedEndValue != undefined &&
@@ -169,7 +202,8 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      this.computedStartValue = this.computedEndValue + (this.computedEnd - this.computedStart) * +this.speed;
+      this.computedStartValue = this.firstComputedEndValue + (this.computedEnd - this.computedStart) * +this.speed;
+      //todo array case
     }
   }
 }

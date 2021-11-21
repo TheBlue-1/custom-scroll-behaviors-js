@@ -4,3 +4,4 @@ custom element
 multi element for things like colors that need 3 things changed
 animation types (ease)
 js only approach
+different undefined checking (maybe cast function like)
