@@ -3,6 +3,7 @@ import { scrollHandler } from './scroll-handler.js';
 export enum Attributes {
   CssAttribute = "css-attribute",
   CssAttributeUnit = "css-attribute-unit",
+  CssAttributePreUnit = "css-attribute-pre-unit",
   Speed = "speed",
   End = "end",
   Start = "start",
@@ -12,6 +13,8 @@ export enum Attributes {
   StartPos = "start-pos",
   EndOpacity = "end-opacity",
   StartOpacity = "start-opacity",
+  EndColor = "end-color",
+  StartColor = "start-color",
 }
 export type CssAttributes = keyof Omit<
   CSSStyleDeclaration,
@@ -21,6 +24,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   private attributesCache: { [Property in Attributes]?: string | null } = {};
 
   protected abstract readonly attributeName: CssAttributes;
+  protected abstract readonly preUnit: string;
   protected abstract readonly unit: string;
 
   protected computedEnd: number | undefined;
@@ -87,16 +91,16 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     this.percentage = (this.scrollPosition - this.computedStart) / (this.computedEnd - this.computedStart);
 
     if (this.percentage <= 0) {
-      element.style[this.attributeName] = this.computedStartValue + this.unit;
+      element.style[this.attributeName] = this.preUnit + this.computedStartValue + this.unit;
       return;
     }
     if (this.percentage >= 1) {
-      element.style[this.attributeName] = this.computedEndValue + this.unit;
+      element.style[this.attributeName] = this.preUnit + this.computedEndValue + this.unit;
       return;
     }
     if (!Array.isArray(this.computedStartValue) && !Array.isArray(this.computedEndValue))
       element.style[this.attributeName] =
-        this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue) + this.unit;
+        this.preUnit + (this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue)) + this.unit;
     else {
       element.style[this.attributeName] = this.multiToSingleValue();
     }
@@ -115,11 +119,12 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     if (this.computedStartValue.length != this.computedEndValue.length) throw "error";
     let result = "";
     for (let i = 0; i < this.computedStartValue.length; i++) {
-      result += this.computedStartValue[i] + this.percentage * (this.computedEndValue[i] - this.computedStartValue[i]);
+      result += (
+        "00" +
+        Math.round(this.computedStartValue[i] + this.percentage * (this.computedEndValue[i] - this.computedStartValue[i])).toString(16)
+      ).slice(-2);
     }
-
-    result += this.unit;
-    return result;
+    return this.preUnit + result + this.unit;
   }
 
   protected stringToPx(value: string): number {

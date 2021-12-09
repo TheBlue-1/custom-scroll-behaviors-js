@@ -1,3 +1,3 @@
-export * from "./elements";
-export * from "./config";
-export * from "./scroll-handler";
+export * from "./elements.js";
+export * from "./config.js";
+export * from "./scroll-handler.js";
