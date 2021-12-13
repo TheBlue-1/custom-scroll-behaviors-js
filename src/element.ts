@@ -15,7 +15,9 @@ export enum Attributes {
   StartOpacity = "start-opacity",
   EndColor = "end-color",
   StartColor = "start-color",
+  Repeat = "repeat",
 }
+export type Repeat = "restart" | "continue";
 export type CssAttributes = keyof Omit<
   CSSStyleDeclaration,
   "length" | "parentRule" | "getPropertyPriority" | "getPropertyValue" | "item" | "removeProperty" | "setProperty"
@@ -48,7 +50,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   public get minimumScroll() {
     this.computeRange();
     if (this.computedEnd == undefined || this.computedStart == undefined) {
-      throw "error";
+      throw new Error("error");
     }
     return this.computedEnd > this.computedStart ? this.computedEnd : this.computedStart;
   }
@@ -60,6 +62,11 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   //end scroll position
   protected get end() {
     return this.getAttributeByName(Attributes.End);
+  }
+
+  //repeat (never stop)
+  protected get repeat(): Repeat {
+    return this.getAttributeByName(Attributes.Repeat) as Repeat;
   }
 
   protected get scrollPosition() {
@@ -85,7 +92,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedEndValue == undefined ||
       this.computedStartValue == undefined
     ) {
-      throw "error";
+      throw new Error("error");
     }
 
     this.percentage = (this.scrollPosition - this.computedStart) / (this.computedEnd - this.computedStart);
@@ -95,8 +102,13 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       return;
     }
     if (this.percentage >= 1) {
-      element.style[this.attributeName] = this.preUnit + this.computedEndValue + this.unit;
-      return;
+      if (!this.repeat) {
+        element.style[this.attributeName] = this.preUnit + this.computedEndValue + this.unit;
+        return;
+      }
+      if (this.repeat == "restart") {
+        this.percentage = this.percentage - Math.floor(this.percentage);
+      }
     }
     if (!Array.isArray(this.computedStartValue) && !Array.isArray(this.computedEndValue))
       element.style[this.attributeName] =
@@ -115,8 +127,8 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   }
 
   protected multiToSingleValue(): string {
-    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue) || !this.percentage) throw "error";
-    if (this.computedStartValue.length != this.computedEndValue.length) throw "error";
+    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue) || !this.percentage) throw new Error("error");
+    if (this.computedStartValue.length != this.computedEndValue.length) throw new Error("error");
     let result = "";
     for (let i = 0; i < this.computedStartValue.length; i++) {
       result += (
@@ -141,7 +153,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       return (window.innerWidth * +val) / 100;
     }
 
-    throw "Incorrect value given: " + value;
+    throw new Error("Incorrect value given: " + value);
   }
 
   //sets  computedEndValue,computedStartValue
@@ -187,7 +199,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     ) {
       if (!Array.isArray(this.computedStartValue))
         this.computedEndValue = this.computedStartValue - (this.computedEnd - this.computedStart) * +this.speed;
-      else throw "error"; //can not compute array with only one speed
+      else throw new Error("error"); //can not compute array with only one speed
     }
     if (
       this.computedEndValue != undefined &&
@@ -198,7 +210,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     ) {
       if (!Array.isArray(this.computedEndValue))
         this.computedStartValue = this.computedEndValue + (this.computedEnd - this.computedStart) * +this.speed;
-      else throw "error"; //can not compute array with only one speed
+      else throw new Error("error"); //can not compute array with only one speed
     }
   }
 }

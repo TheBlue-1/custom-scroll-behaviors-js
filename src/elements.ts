@@ -6,9 +6,9 @@ export class CustomBehaviorElement extends ScrollBehaviorElement {
 
   protected get attributeName(): CssAttributes {
     const c = this.getAttributeByName(Attributes.CssAttribute);
-    if (!c) throw "error";
+    if (!c) throw new Error("error");
 
-    if (Object.keys(CSSStyleDeclaration).indexOf(c) < 0) throw "error";
+    if (Object.keys(CSSStyleDeclaration).indexOf(c) < 0) throw new Error("error");
     return <CssAttributes>c;
   }
 
@@ -19,7 +19,7 @@ export class CustomBehaviorElement extends ScrollBehaviorElement {
 
   protected get preUnit(): string {
     const u = this.getAttributeByName(Attributes.CssAttributePreUnit);
-    if (!u) throw "error";
+    if (!u) throw new Error("error");
     return u;
   }
 
@@ -30,7 +30,7 @@ export class CustomBehaviorElement extends ScrollBehaviorElement {
 
   protected get unit(): string {
     const u = this.getAttributeByName(Attributes.CssAttributeUnit);
-    if (!u) throw "error";
+    if (!u) throw new Error("error");
     return u;
   }
 

@@ -21,7 +21,7 @@ class ScrollHandler {
 
   public addBehavior(behavior: ScrollBehaviorElement) {
     const element = behavior.parentElement;
-    if (!element) throw "Behaviors must have a parent";
+    if (!element) throw new Error("Behaviors must have a parent");
     let scrollElement = this.elements.find((e) => e.element == element);
     if (!scrollElement) {
       scrollElement = new ScrollElement(element);
