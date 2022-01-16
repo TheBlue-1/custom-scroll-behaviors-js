@@ -139,9 +139,21 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     return this.preUnit + result + this.unit;
   }
 
-  protected stringToPx(value: string): number {
+  protected stringToPx(value: string, isWidth: boolean = false): number {
+    let offset = 0;
+    if (value.endsWith("self")) {
+      offset = isWidth ? this.clientWidth : this.clientHeight;
+      if (value[value.length - 5] == "-") {
+        offset = -offset;
+      }
+      value = value.slice(0, -5);
+    }
+
     //TODO better and more than just vh
     let unit = value.slice(-2);
+    if (!Number.isNaN(+unit)) {
+      return +value;
+    }
     let val = value.slice(0, -2);
     if (unit == "px") {
       return +val;

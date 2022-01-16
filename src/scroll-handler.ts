@@ -9,8 +9,8 @@ class ScrollHandler {
 
   private constructor() {
     this.config = getCurrentConfig();
-    window.addEventListener("scroll", () => this.adjust());
-    window.addEventListener("resize", () => this.onResize());
+    window.addEventListener("scroll", () => this.adjust(), { passive: true });
+    window.addEventListener("resize", () => this.onResize(), { passive: true });
     document.addEventListener("DOMContentLoaded", () => this.onResize());
   }
 

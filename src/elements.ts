@@ -35,6 +35,7 @@ export class CustomBehaviorElement extends ScrollBehaviorElement {
   }
 
   protected computeValues(): void {
+    //currently only supports numbers or lengths
     this.computedStartValue = this.startValue ? this.stringToPx(this.startValue) : undefined;
     this.computedEndValue = this.endValue ? this.stringToPx(this.endValue) : undefined;
   }
@@ -84,8 +85,8 @@ export class HorizontalMovementBehaviorElement extends ScrollBehaviorElement {
   }
 
   protected computeValues(): void {
-    this.computedStartValue = this.startPos ? this.stringToPx(this.startPos) : undefined;
-    this.computedEndValue = this.endPos ? this.stringToPx(this.endPos) : undefined;
+    this.computedStartValue = this.startPos ? this.stringToPx(this.startPos, true) : undefined;
+    this.computedEndValue = this.endPos ? this.stringToPx(this.endPos, true) : undefined;
   }
 }
 customElements.define("horizontal-scroll-behavior", HorizontalMovementBehaviorElement);

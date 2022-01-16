@@ -1,7 +1,7 @@
 # before 1.0
-way to say minus size (vertical movement: 100px - own size (10vw)) could be an attribute or syntax ("100px - self")
 different undefined checking (maybe cast function like)
 readme - docs
+errors
 
 # after 1.0 
 animation types (ease)
