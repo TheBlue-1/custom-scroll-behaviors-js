@@ -1,18 +1,13 @@
-import { CurrentConfig, getCurrentConfig } from './config.js';
-import { ScrollBehaviorElement } from './element.js';
+import { CurrentConfig, getCurrentConfig } from "./config.js";
+import { ScrollBehaviorElement } from "./element.js";
 
 class ScrollHandler {
   private static _instance: ScrollHandler;
 
-  public config: CurrentConfig;
+  public config: CurrentConfig = new CurrentConfig();
   public elements: ScrollElement[] = [];
 
-  private constructor() {
-    this.config = getCurrentConfig();
-    window.addEventListener("scroll", () => this.adjust(), { passive: true });
-    window.addEventListener("resize", () => this.onResize(), { passive: true });
-    document.addEventListener("DOMContentLoaded", () => this.onResize());
-  }
+  private constructor() {}
 
   public static get instance(): ScrollHandler {
     if (!this._instance) this._instance = new ScrollHandler();
@@ -36,6 +31,13 @@ class ScrollHandler {
     this.elements.forEach((e) => {
       e.adjust();
     });
+  }
+
+  public init() {
+    this.config = getCurrentConfig();
+    window.addEventListener("scroll", () => this.adjust(), { passive: true });
+    window.addEventListener("resize", () => this.onResize(), { passive: true });
+    document.addEventListener("DOMContentLoaded", () => this.onResize());
   }
 
   public onResize(): void {

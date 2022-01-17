@@ -1,6 +1,5 @@
 //if a setting is set to a function the function will be called each scroll event
-export const ScrollElementsConfig: Config = {
-  //just a sample because an empty class wouldn't work out with the typings
+export const scrollElementsConfig: Config = {
   autoSizePage: true,
 };
 export class CurrentConfig {
@@ -11,9 +10,9 @@ export type Config = {
 };
 export function getCurrentConfig(): CurrentConfig {
   const config: CurrentConfig = new CurrentConfig();
-  for (const key in ScrollElementsConfig) {
+  for (const key in scrollElementsConfig) {
     const k = <keyof CurrentConfig>key;
-    config[k] = typeof ScrollElementsConfig[k] == "function" ? (<() => any>ScrollElementsConfig[k])() : ScrollElementsConfig[k];
+    config[k] = typeof scrollElementsConfig[k] == "function" ? (<() => any>scrollElementsConfig[k])() : scrollElementsConfig[k];
   }
   return config;
 }

@@ -1,9 +1,14 @@
 import React from 'react';
 
 import type { NextPage } from 'next'
-const Home: NextPage = () => {
-    React.useEffect(() => {import("custom-scroll-behaviors")}
-    , [])
+    React.useEffect(() =>  { 
+        const loadingScrollBehavior= import("custom-scroll-behaviors");
+        loadingScrollBehavior.then(scrollBehavior=>{
+            scrollBehavior.scrollElementsConfig.autoSizePage = true;
+            scrollBehavior.scrollHandler.init();
+        })
+}, [])
+  
   return (  
     <div>
     <div >

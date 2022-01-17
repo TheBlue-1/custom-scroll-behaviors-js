@@ -1,4 +1,4 @@
-import { Attributes, CssAttributes, ScrollBehaviorElement } from './element.js';
+import { Attributes, CssAttributes, ScrollBehaviorElement } from "./element.js";
 
 export class CustomBehaviorElement extends ScrollBehaviorElement {
   protected computedEndValue: number | undefined;

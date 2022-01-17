@@ -1,5 +1,13 @@
 <head>
-    <script type="module" src="../../target/index.js"></script>
+    <script type="module" src="../../target/index.js">
+    </script>
+    <script type="module">
+        import { scrollElementsConfig, scrollHandler } from '../../target/index.js'
+
+        scrollElementsConfig.autoSizePage = true;
+        scrollHandler.init();
+
+    </script>
     <style>
         * {
             margin: 0;
@@ -8,9 +16,6 @@
             box-sizing: border-box;
         }
     </style>
-    <script>
-    //ScrollElementsConfig
-    </script>
 </head>
 
 <body>
