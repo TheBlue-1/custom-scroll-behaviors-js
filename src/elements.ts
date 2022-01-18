@@ -1,4 +1,4 @@
-import { Attributes, CssAttributes, ScrollBehaviorElement } from "./element.js";
+import { Attributes, CssAttributes, ScrollBehaviorElement } from './element.js';
 
 export class CustomBehaviorElement extends ScrollBehaviorElement {
   protected computedEndValue: number | undefined;
@@ -36,8 +36,8 @@ export class CustomBehaviorElement extends ScrollBehaviorElement {
 
   protected computeValues(): void {
     //currently only supports numbers or lengths
-    this.computedStartValue = this.startValue ? this.stringToPx(this.startValue) : undefined;
-    this.computedEndValue = this.endValue ? this.stringToPx(this.endValue) : undefined;
+    this.computedStartValue = +(this.startValue ?? 0);
+    this.computedEndValue = +(this.endValue ?? 0);
   }
 }
 customElements.define("custom-scroll-behavior", CustomBehaviorElement);
