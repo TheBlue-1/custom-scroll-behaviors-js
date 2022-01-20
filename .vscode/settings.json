@@ -11,5 +11,8 @@
         "**/.settings": true,
         "**/.factorypath": true,
         "**/node_modules": true
-    }
+    },
+    "cSpell.words": [
+        "rgba"
+    ]
 }

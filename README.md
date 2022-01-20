@@ -1,6 +1,6 @@
 # custom-scroll-behaviors-js (v0.1) - in development
 
-Library for scroll events on webpages, including paralax effects and much more, easy to use with custom elements and JS only approach (coming soon).
+Library for scroll events on webpages, including parallax effects and much more, easy to use with custom elements and JS only approach (coming soon).
 See test/example projects and the source at [github]().
 Supports all known desktop and mobile browsers (except IE and Opera mini).
 
@@ -12,7 +12,7 @@ Supports all known desktop and mobile browsers (except IE and Opera mini).
   - color change
   - opacity change
 - custom behavior to adjust to your needs
-- automaticly adjust the height of the body (optional)
+- automatically adjust the height of the body (optional)
 
 ### next version (1.1) will support:
 
@@ -66,14 +66,14 @@ add the behaviors to an element by adding the custom element as a child
 
 ### Properties of the custom elements
 
-#### On all behavioes
+#### On all behaviors
 
-| name   | usage                                                 | allowed values                                                |
-| ------ | ----------------------------------------------------- | ------------------------------------------------------------- |
-| start  | start of the animation<br />(scoll distance from top) | number with unit (px,vh,vw)<br />(no unit will default to px) |
-| end    | end of the animation<br />(scoll distance from top)   | number with unit (px,vh,vw)<br />(no unit will default to px) |
-| speed  | multiplier for scroll-value                           | positive number                                               |
-| repeat | let the animation repeat<br />or continue itself      | "repeat" / "continue"<br />optional                           |
+| name   | usage                                                  | allowed values                                                |
+| ------ | ------------------------------------------------------ | ------------------------------------------------------------- |
+| start  | start of the animation<br />(scroll distance from top) | number with unit (px,vh,vw)<br />(no unit will default to px) |
+| end    | end of the animation<br />(scroll distance from top)   | number with unit (px,vh,vw)<br />(no unit will default to px) |
+| speed  | multiplier for scroll-value                            | positive number                                               |
+| repeat | let the animation repeat<br />or continue itself       | "repeat" / "continue"<br />optional                           |
 
 Each behavior also has a start and end value (like the start and end position).
 Of the five attributes : start,end,speed,"start-value","end-value" exactly 4 have to be specified
