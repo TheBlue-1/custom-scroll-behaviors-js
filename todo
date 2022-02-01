@@ -1,6 +1,5 @@
-# before 1.0
-different undefined checking (maybe cast function like)
-
 # after 1.0 
 animation types (ease)
 js only approach
+angular test and docs
+auto deploy

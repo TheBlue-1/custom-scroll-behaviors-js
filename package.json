@@ -1,11 +1,11 @@
 {
   "name": "custom-scroll-behaviors",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./target && tsc --declarationMap && cp README.md target/ && cp release.package.json target/package.json",
-    "start": "npm run build"
+    "release": "npm publish ./target"
   },
   "author": "",
   "license": "MPL 2.0",
