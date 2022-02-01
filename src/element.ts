@@ -50,7 +50,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   public get minimumScroll() {
     this.computeRange();
     if (this.computedEnd == undefined || this.computedStart == undefined) {
-      throw new Error("error");
+      throw new Error("start and/or end couldn't be computed");
     }
     return this.computedEnd > this.computedStart ? this.computedEnd : this.computedStart;
   }
@@ -92,7 +92,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedEndValue == undefined ||
       this.computedStartValue == undefined
     ) {
-      throw new Error("error");
+      throw new Error("start and/or end couldn't be computed");
     }
 
     this.percentage = (this.scrollPosition - this.computedStart) / (this.computedEnd - this.computedStart);
@@ -127,8 +127,9 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   }
 
   protected multiToSingleValue(): string {
-    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue) || !this.percentage) throw new Error("error");
-    if (this.computedStartValue.length != this.computedEndValue.length) throw new Error("error");
+    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue) || !this.percentage)
+      throw new Error("multiple starts and/or multiple ends couldn't be computed");
+    if (this.computedStartValue.length != this.computedEndValue.length) throw new Error("starts and ends dont have the same length");
     let result = "";
     for (let i = 0; i < this.computedStartValue.length; i++) {
       result += (
@@ -165,7 +166,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       return (window.innerWidth * +val) / 100;
     }
 
-    throw new Error("Incorrect value given: " + value);
+    throw new Error("Unsupported value given: " + value);
   }
 
   //sets  computedEndValue,computedStartValue
@@ -211,7 +212,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     ) {
       if (!Array.isArray(this.computedStartValue))
         this.computedEndValue = this.computedStartValue - (this.computedEnd - this.computedStart) * +this.speed;
-      else throw new Error("error"); //can not compute array with only one speed
+      else throw new Error("can not compute array with speed");
     }
     if (
       this.computedEndValue != undefined &&
@@ -222,7 +223,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     ) {
       if (!Array.isArray(this.computedEndValue))
         this.computedStartValue = this.computedEndValue + (this.computedEnd - this.computedStart) * +this.speed;
-      else throw new Error("error"); //can not compute array with only one speed
+      else throw new Error("can not compute array with speed");
     }
   }
 }
