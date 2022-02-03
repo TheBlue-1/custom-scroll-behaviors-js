@@ -1,14 +1,14 @@
 {
-  "name": "scroll",
-  "version": "1.0.0",
+  "name": "custom-scroll-behaviors",
+  "version": "1.0.2",
   "description": "",
-  "main": "index.ts",
+  "main": "index.js",
   "scripts": {
-    "build": "rimraf ./target && tsc",
-    "start": "npm run build"
+    "build": "rimraf ./target && tsc --declarationMap && cp README.md target/ && cp release.package.json target/package.json",
+    "release": "npm publish ./target"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MPL 2.0",
   "dependencies": {
     "rimraf": "^3.0.2",
     "typescript": "^4.4.3"
