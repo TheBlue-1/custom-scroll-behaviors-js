@@ -64,6 +64,16 @@ add the behaviors to an element by adding the custom element as a child
 </div>
 ```
 
+### Elements
+
+| Name                       |
+| -------------------------- |
+| vertical-scroll-behavior   |
+| horizontal-scroll-behavior |
+| visibility-scroll-behavior |
+| rgba-color-scroll-behavior |
+| custom-scroll-behavior     |
+
 ### Properties of the custom elements
 
 #### On all behaviors
