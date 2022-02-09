@@ -1,4 +1,4 @@
-# custom-scroll-behaviors-js (v1.0.5) - in development
+# custom-scroll-behaviors-js (v1.0.7) - in development
 
 Library for scroll events on webpages, including parallax effects and much more, easy to use with custom elements and JS only approach (coming soon).
 See test/example projects and the source at [github]().
