@@ -142,7 +142,7 @@ export class RgbaBackgroundColorBehaviorElement extends ScrollBehaviorElement {
   protected multiToSingleValue(values: number[]): string {
     let result = this.preUnit;
     for (let i = 0; i < values.length; i++) {
-      result += ("00" + Math.round(values[i])).slice(-2);
+      result += ("00" + Math.round(values[i]).toString(16)).slice(-2);
     }
     return result + this.unit;
   }
