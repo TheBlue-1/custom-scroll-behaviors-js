@@ -1,4 +1,4 @@
-# custom-scroll-behaviors-js (v1.0.5) - in development
+# custom-scroll-behaviors-js (v1.0.7) - in development
 
 Library for scroll events on webpages, including parallax effects and much more, easy to use with custom elements and JS only approach (coming soon).
 See test/example projects and the source at [github]().
@@ -63,6 +63,16 @@ add the behaviors to an element by adding the custom element as a child
   <rgba-color-scroll-behavior start="100px" end="1000px" start-color="#ff0000ff" end-color="#0000ffff"> </rgba-color-scroll-behavior>
 </div>
 ```
+
+### Elements
+
+| Name                       |
+| -------------------------- |
+| vertical-scroll-behavior   |
+| horizontal-scroll-behavior |
+| visibility-scroll-behavior |
+| rgba-color-scroll-behavior |
+| custom-scroll-behavior     |
 
 ### Properties of the custom elements
 
