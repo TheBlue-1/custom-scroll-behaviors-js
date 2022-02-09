@@ -43,9 +43,9 @@ export class CustomBehaviorElement extends ScrollBehaviorElement {
 customElements.define("custom-scroll-behavior", CustomBehaviorElement);
 
 export class VerticalMovementBehaviorElement extends ScrollBehaviorElement {
-  protected readonly attributeName: CssAttributes = "top";
-  protected readonly preUnit: string = "";
-  protected readonly unit: string = "px";
+  protected readonly attributeName: CssAttributes = "transform";
+  protected readonly preUnit: string = "translateY(";
+  protected readonly unit: string = "px)";
 
   protected computedEndValue: number | undefined;
   protected computedStartValue: number | undefined;
@@ -67,9 +67,9 @@ export class VerticalMovementBehaviorElement extends ScrollBehaviorElement {
 }
 customElements.define("vertical-scroll-behavior", VerticalMovementBehaviorElement);
 export class HorizontalMovementBehaviorElement extends ScrollBehaviorElement {
-  protected readonly attributeName: CssAttributes = "left";
-  protected readonly preUnit: string = "";
-  protected readonly unit: string = "px";
+  protected readonly attributeName: CssAttributes = "transform";
+  protected readonly preUnit: string = "translateX(";
+  protected readonly unit: string = "px)";
 
   protected computedEndValue: number | undefined;
   protected computedStartValue: number | undefined;
@@ -135,6 +135,14 @@ export class RgbaBackgroundColorBehaviorElement extends ScrollBehaviorElement {
   protected computeValues(): void {
     this.computedStartValue = this.startColor ? this.splitColor(this.startColor) : undefined;
     this.computedEndValue = this.endColor ? this.splitColor(this.endColor) : undefined;
+  }
+
+  protected multiToSingleValue(values: number[]): string {
+    let result = this.preUnit;
+    for (let i = 0; i < values.length; i++) {
+      result += ("00" + Math.round(values[i])).slice(-2);
+    }
+    return result + this.unit;
   }
 
   protected splitColor(color: string): number[] {

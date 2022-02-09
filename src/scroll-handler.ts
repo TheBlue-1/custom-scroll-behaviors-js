@@ -1,5 +1,5 @@
-import { CurrentConfig, getCurrentConfig } from "./config.js";
-import { ScrollBehaviorElement } from "./element.js";
+import { CurrentConfig, getCurrentConfig } from './config.js';
+import { ScrollBehaviorElement } from './element.js';
 
 class ScrollHandler {
   private static _instance: ScrollHandler;
@@ -38,6 +38,7 @@ class ScrollHandler {
     window.addEventListener("scroll", () => this.adjust(), { passive: true });
     window.addEventListener("resize", () => this.onResize(), { passive: true });
     document.addEventListener("DOMContentLoaded", () => this.onResize());
+    this.onResize();
   }
 
   public onResize(): void {

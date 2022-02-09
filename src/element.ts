@@ -1,3 +1,4 @@
+import { average } from './misc.js';
 import { scrollHandler } from './scroll-handler.js';
 
 export enum Attributes {
@@ -55,10 +56,6 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     return this.computedEnd > this.computedStart ? this.computedEnd : this.computedStart;
   }
 
-  protected get averageDifference() {
-    return 3;
-  }
-
   //end scroll position
   protected get end() {
     return this.getAttributeByName(Attributes.End);
@@ -84,6 +81,30 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     return this.getAttributeByName(Attributes.Start);
   }
 
+  private get currentValueString(): string {
+    if (!this.computedStartValue || !this.computedEndValue || !this.percentage) throw new Error("values have not been computed");
+
+    if (!Array.isArray(this.computedStartValue) && !Array.isArray(this.computedEndValue)) {
+      return this.preUnit + (this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue)) + this.unit;
+    }
+
+    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue))
+      throw new Error("multiple starts and/or multiple ends have not been computed");
+    if (this.computedStartValue.length != this.computedEndValue.length) throw new Error("starts and ends dont have the same length");
+    const currentValues = this.computeMultiValueProgress(this.computedStartValue, this.computedEndValue, this.percentage);
+    return this.multiToSingleValue(currentValues);
+  }
+
+  private get endValueString(): string {
+    if (!Array.isArray(this.computedEndValue)) return this.preUnit + this.computedEndValue + this.unit;
+    return this.multiToSingleValue(this.computedEndValue);
+  }
+
+  private get startValueString(): string {
+    if (!Array.isArray(this.computedStartValue)) return this.preUnit + this.computedStartValue + this.unit;
+    return this.multiToSingleValue(this.computedStartValue);
+  }
+
   public adjust(element: HTMLElement): void {
     this.computeRange();
     if (
@@ -97,47 +118,46 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
 
     this.percentage = (this.scrollPosition - this.computedStart) / (this.computedEnd - this.computedStart);
 
+    if (this.repeat == "restart") {
+      this.percentage = this.percentage - Math.floor(this.percentage);
+    }
+
     if (this.percentage <= 0) {
-      element.style[this.attributeName] = this.preUnit + this.computedStartValue + this.unit;
+      element.style[this.attributeName] = this.startValueString;
       return;
     }
     if (this.percentage >= 1) {
-      if (!this.repeat) {
-        element.style[this.attributeName] = this.preUnit + this.computedEndValue + this.unit;
+      if (this.repeat != "continue") {
+        element.style[this.attributeName] = this.endValueString;
         return;
       }
-      if (this.repeat == "restart") {
-        this.percentage = this.percentage - Math.floor(this.percentage);
-      }
     }
-    if (!Array.isArray(this.computedStartValue) && !Array.isArray(this.computedEndValue))
-      element.style[this.attributeName] =
-        this.preUnit + (this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue)) + this.unit;
-    else {
-      element.style[this.attributeName] = this.multiToSingleValue();
-    }
+    element.style[this.attributeName] = this.currentValueString;
   }
 
   public attributeChangedCallback(name: Attributes, oldValue: string, newValue: string) {
     this.attributesCache[name] = newValue;
   }
 
+  protected computeMultiValueProgress(startValues: number[], endValues: number[], percentage: number): any[] {
+    const result: number[] = [];
+    for (let i = 0; i < startValues.length; i++) {
+      result.push(startValues[i] + percentage * (endValues[i] - startValues[i]));
+    }
+
+    return result;
+  }
+
   protected getAttributeByName(name: Attributes): string | null | undefined {
     return this.attributesCache[name];
   }
 
-  protected multiToSingleValue(): string {
-    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue) || !this.percentage)
-      throw new Error("multiple starts and/or multiple ends couldn't be computed");
-    if (this.computedStartValue.length != this.computedEndValue.length) throw new Error("starts and ends dont have the same length");
-    let result = "";
-    for (let i = 0; i < this.computedStartValue.length; i++) {
-      result += (
-        "00" +
-        Math.round(this.computedStartValue[i] + this.percentage * (this.computedEndValue[i] - this.computedStartValue[i])).toString(16)
-      ).slice(-2);
+  protected multiToSingleValue(values: number[]): string {
+    let result = this.preUnit;
+    for (let i = 0; i < values.length; i++) {
+      result += values[i];
     }
-    return this.preUnit + result + this.unit;
+    return result + this.unit;
   }
 
   protected stringToPx(value: string, isWidth: boolean = false): number {
@@ -172,6 +192,15 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   //sets  computedEndValue,computedStartValue
   protected abstract computeValues(): void;
 
+  private averageRange(startValues: number[], endValues: number[]) {
+    if (startValues.length != endValues.length) throw new Error("starts and ends dont have the same length");
+    const values: number[] = [];
+    for (let i = 0; i < startValues.length; i++) {
+      values.push(endValues[i] - startValues[i]);
+    }
+    return average(values);
+  }
+
   private computeRange() {
     this.computedStart = this.start ? this.stringToPx(this.start) : undefined;
     this.computedEnd = this.end ? this.stringToPx(this.end) : undefined;
@@ -192,7 +221,15 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      this.computedEnd = (this.averageDifference + this.computedStart * +this.speed) / +this.speed;
+      if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue)) {
+        if (Array.isArray(this.computedStartValue) || Array.isArray(this.computedEndValue)) {
+          throw new Error("start and end have to be both single or both multi values");
+        }
+
+        this.computedEnd = this.computedStart + (this.computedEndValue - this.computedStartValue) / +this.speed;
+      } else {
+        this.computedEnd = this.computedStart + this.averageRange(this.computedStartValue, this.computedEndValue) / +this.speed;
+      }
     }
     if (
       this.computedEndValue != undefined &&
@@ -201,7 +238,15 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart == undefined &&
       this.speed != null
     ) {
-      this.computedStart = (this.computedEnd * +this.speed - this.averageDifference) / +this.speed;
+      if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue)) {
+        if (Array.isArray(this.computedStartValue) || Array.isArray(this.computedEndValue)) {
+          throw new Error("start and end have to be both single or both multi values");
+        }
+
+        this.computedStart = this.computedEnd - (this.computedEndValue - this.computedStartValue) / +this.speed;
+      } else {
+        this.computedStart = this.computedEnd - this.averageRange(this.computedStartValue, this.computedEndValue) / +this.speed;
+      }
     }
     if (
       this.computedEndValue == undefined &&
@@ -211,8 +256,13 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.speed != null
     ) {
       if (!Array.isArray(this.computedStartValue))
-        this.computedEndValue = this.computedStartValue - (this.computedEnd - this.computedStart) * +this.speed;
-      else throw new Error("can not compute array with speed");
+        this.computedEndValue = this.computedStartValue + (this.computedEnd - this.computedStart) * +this.speed;
+      else {
+        this.computedEndValue = [];
+        for (let i = 0; i < this.computedStartValue.length; i++) {
+          this.computedEndValue.push(this.computedStartValue[i] + (this.computedEnd - this.computedStart) * +this.speed);
+        }
+      }
     }
     if (
       this.computedEndValue != undefined &&
@@ -222,8 +272,13 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.speed != null
     ) {
       if (!Array.isArray(this.computedEndValue))
-        this.computedStartValue = this.computedEndValue + (this.computedEnd - this.computedStart) * +this.speed;
-      else throw new Error("can not compute array with speed");
+        this.computedStartValue = this.computedEndValue - (this.computedEnd - this.computedStart) * +this.speed;
+      else {
+        this.computedStartValue = [];
+        for (let i = 0; i < this.computedEndValue.length; i++) {
+          this.computedStartValue.push(this.computedEndValue[i] - (this.computedEnd - this.computedStart) * +this.speed);
+        }
+      }
     }
   }
 }
