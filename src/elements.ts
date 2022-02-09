@@ -44,8 +44,9 @@ customElements.define("custom-scroll-behavior", CustomBehaviorElement);
 
 export class VerticalMovementBehaviorElement extends ScrollBehaviorElement {
   protected readonly attributeName: CssAttributes = "transform";
-  protected readonly preUnit: string = "translateY(";
-  protected readonly unit: string = "px)";
+  protected readonly preUnit: string = "";
+  protected readonly transformFunction: string = "translateY";
+  protected readonly unit: string = "px";
 
   protected computedEndValue: number | undefined;
   protected computedStartValue: number | undefined;
@@ -68,8 +69,9 @@ export class VerticalMovementBehaviorElement extends ScrollBehaviorElement {
 customElements.define("vertical-scroll-behavior", VerticalMovementBehaviorElement);
 export class HorizontalMovementBehaviorElement extends ScrollBehaviorElement {
   protected readonly attributeName: CssAttributes = "transform";
-  protected readonly preUnit: string = "translateX(";
-  protected readonly unit: string = "px)";
+  protected readonly preUnit: string = "";
+  protected readonly transformFunction: string = "translateX";
+  protected readonly unit: string = "px";
 
   protected computedEndValue: number | undefined;
   protected computedStartValue: number | undefined;

@@ -28,6 +28,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
 
   protected abstract readonly attributeName: CssAttributes;
   protected abstract readonly preUnit: string;
+  protected readonly transformFunction: string = "";
   protected abstract readonly unit: string;
 
   protected computedEnd: number | undefined;
@@ -82,7 +83,8 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   }
 
   private get currentValueString(): string {
-    if (!this.computedStartValue || !this.computedEndValue || !this.percentage) throw new Error("values have not been computed");
+    if (this.computedStartValue == undefined || this.computedEndValue == undefined || this.percentage == undefined)
+      throw new Error("values have not been computed");
 
     if (!Array.isArray(this.computedStartValue) && !Array.isArray(this.computedEndValue)) {
       return this.preUnit + (this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue)) + this.unit;
@@ -123,16 +125,16 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     }
 
     if (this.percentage <= 0) {
-      element.style[this.attributeName] = this.startValueString;
+      this.setValue(element, this.startValueString);
       return;
     }
     if (this.percentage >= 1) {
       if (this.repeat != "continue") {
-        element.style[this.attributeName] = this.endValueString;
+        this.setValue(element, this.endValueString);
         return;
       }
     }
-    element.style[this.attributeName] = this.currentValueString;
+    this.setValue(element, this.currentValueString);
   }
 
   public attributeChangedCallback(name: Attributes, oldValue: string, newValue: string) {
@@ -158,6 +160,17 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       result += values[i];
     }
     return result + this.unit;
+  }
+
+  protected setValue(element: HTMLElement, value: string) {
+    if (this.attributeName != "transform") element.style[this.attributeName] = value;
+    else {
+      const oldValue: string = element.style["transform"];
+      const transformRegex = new RegExp(`${this.transformFunction}\\s?\\(.*?\\)`);
+      if (oldValue.match(transformRegex))
+        element.style["transform"] = oldValue.replace(transformRegex, `${this.transformFunction}(${value})`);
+      else element.style["transform"] = oldValue + ` ${this.transformFunction}(${value})`;
+    }
   }
 
   protected stringToPx(value: string, isWidth: boolean = false): number {

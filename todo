@@ -1,11 +1,10 @@
 #fixes
-test scrollheight without resize
 better undefined checking (no if!=undefined everywhere)
 rename variables (no computed everything)
 more length types (rem,cm usw)
+auto deploy
 
 # after 1.0 
 animation types (ease)
 js only approach
 angular test and docs
-auto deploy
