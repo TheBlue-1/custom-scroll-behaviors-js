@@ -140,7 +140,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     return this.multiToSingleValue(this.computedStartValue);
   }
 
-  public adjust(element: HTMLElement): void {
+  public adjust(): void {
     this.computeRange();
     if (
       this.computedEnd == undefined ||
@@ -158,18 +158,19 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     if (this.repeat == "restart") {
       this.percentage = this.percentage - Math.floor(this.percentage);
     }
-
+    const parentElement = this.parentElement;
+    if (parentElement == null) return;
     if (this.percentage <= 0) {
-      this.setValue(element, this.startValueString);
+      this.setValue(parentElement, this.startValueString);
       return;
     }
     if (this.percentage >= 1) {
       if (this.repeat != "continue") {
-        this.setValue(element, this.endValueString);
+        this.setValue(parentElement, this.endValueString);
         return;
       }
     }
-    this.setValue(element, this.currentValueString);
+    this.setValue(parentElement, this.currentValueString);
   }
 
   public attributeChangedCallback(
@@ -229,27 +230,28 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   protected stringToPx(value: string, isWidth: boolean = false): number {
     let offset = 0;
     if (value.endsWith("self")) {
-      offset = isWidth ? this.clientWidth : this.clientHeight;
+      offset = isWidth
+        ? this.parentElement?.clientWidth ?? 0
+        : this.parentElement?.clientHeight ?? 0;
       if (value[value.length - 5] == "-") {
         offset = -offset;
-      }
-      value = value.slice(0, -5);
+      } else value = value.slice(0, -5);
     }
 
     //TODO better and more than just vh
     let unit = value.slice(-2);
     if (!Number.isNaN(+unit)) {
-      return +value;
+      return +value + offset;
     }
     let val = value.slice(0, -2);
     if (unit == "px") {
-      return +val;
+      return +val + offset;
     }
     if (unit == "vh") {
-      return (window.innerHeight * +val) / 100;
+      return (window.innerHeight * +val) / 100 + offset;
     }
     if (unit == "vw") {
-      return (window.innerWidth * +val) / 100;
+      return (window.innerWidth * +val) / 100 + offset;
     }
 
     throw new Error("Unsupported value given: " + value);

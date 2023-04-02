@@ -34,7 +34,10 @@ To import
   <head>
     <script type="module" src="../../target/index.js"></script>
     <script type="module">
-      import { scrollElementsConfig, scrollHandler } from "../../target/index.js";
+      import {
+        scrollElementsConfig,
+        scrollHandler,
+      } from "../../target/index.js";
       scrollElementsConfig.autoSizePage = true;
       scrollHandler.init();
     </script>
@@ -59,8 +62,19 @@ add the behaviors to an element by adding the custom element as a child
 
 ```html
 <div class="some-style">
-  <vertical-scroll-behavior start="0px" end="700px" start-pos="0vh" end-pos="90vh"></vertical-scroll-behavior>
-  <rgba-color-scroll-behavior start="100px" end="1000px" start-color="#ff0000ff" end-color="#0000ffff"> </rgba-color-scroll-behavior>
+  <vertical-scroll-behavior
+    start="0px"
+    end="700px"
+    start-pos="0vh"
+    end-pos="90vh"
+  ></vertical-scroll-behavior>
+  <rgba-color-scroll-behavior
+    start="100px"
+    end="1000px"
+    start-color="#ff0000ff"
+    end-color="#0000ffff"
+  >
+  </rgba-color-scroll-behavior>
 </div>
 ```
 
@@ -87,6 +101,7 @@ add the behaviors to an element by adding the custom element as a child
 
 Each behavior also has a start and end value (like the start and end position).
 Of the five attributes : start,end,speed,"start-value","end-value" exactly 4 have to be specified
+Start and end parameters are allowed to end with +self or -self to add or remove the own height or width (mostly height)
 
 #### On vertical and horizontal behaviors
 

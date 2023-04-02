@@ -1,5 +1,5 @@
-import { CurrentConfig, getCurrentConfig } from './config.js';
-import { ScrollBehaviorElement } from './element.js';
+import { CurrentConfig, getCurrentConfig } from "./config.js";
+import { ScrollBehaviorElement } from "./element.js";
 
 class ScrollHandler {
   private static _instance: ScrollHandler;
@@ -51,7 +51,10 @@ class ScrollHandler {
       }
     });
     document.body.style.height = `calc(${minimumScroll}px + 100vh)`;
-    document.body.style.setProperty("page-height", `calc(${minimumScroll}px + 100vh)`);
+    document.body.style.setProperty(
+      "page-height",
+      `calc(${minimumScroll}px + 100vh)`
+    );
     this.adjust();
   }
 }
@@ -73,7 +76,7 @@ class ScrollElement {
   }
 
   public adjust() {
-    this.behaviors.forEach((b) => b.adjust(this.element));
+    this.behaviors.forEach((b) => b.adjust());
   }
 }
 
