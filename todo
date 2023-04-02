@@ -6,6 +6,8 @@ more length types (rem,cm usw)
 auto deploy
 defaults for start end usw
 better react integration
+add self to docs
+typings (at least missing for react elements)
 
 # 1.x 
 animation types (ease)
