@@ -41,6 +41,8 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   protected abstract computedEndValue: number | number[] | undefined;
   protected computedStart: number | undefined;
   protected abstract computedStartValue: number | number[] | undefined;
+  protected parentHeight: number = 0;
+  protected parentWidth: number = 0;
   // negative: before behavior
   // 0-1: behavior percentage
   // above 1: after behavior
@@ -56,7 +58,14 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     return Object.keys(Attributes).map((k) => (<any>Attributes)[k]);
   }
 
+  /**
+   * called on resize
+   */
   public get minimumScroll() {
+    // reset heights only on resize
+    this.parentHeight = this.parentElement?.clientHeight ?? 0;
+    this.parentWidth = this.parentElement?.clientWidth ?? 0;
+
     this.computeRange();
     if (this.computedEnd == undefined || this.computedStart == undefined) {
       throw new Error("start and/or end couldn't be computed");
@@ -141,7 +150,6 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   }
 
   public adjust(): void {
-    this.computeRange();
     if (
       this.computedEnd == undefined ||
       this.computedStart == undefined ||
@@ -179,6 +187,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     newValue: string
   ) {
     this.attributesCache[name] = newValue;
+    this.computeRange();
   }
 
   protected computeMultiValueProgress(
@@ -230,14 +239,12 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   protected stringToPx(value: string, isWidth: boolean = false): number {
     let offset = 0;
     if (value.endsWith("self")) {
-      offset = isWidth
-        ? this.parentElement?.clientWidth ?? 0
-        : this.parentElement?.clientHeight ?? 0;
+      offset = isWidth ? this.parentWidth : this.parentHeight;
       if (value[value.length - 5] == "-") {
         offset = -offset;
-      } else value = value.slice(0, -5);
+      }
+      value = value.slice(0, -5);
     }
-
     //TODO better and more than just vh
     let unit = value.slice(-2);
     if (!Number.isNaN(+unit)) {
