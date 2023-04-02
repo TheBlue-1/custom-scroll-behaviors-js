@@ -51,6 +51,7 @@ class ScrollHandler {
       }
     });
     document.body.style.height = `calc(${minimumScroll}px + 100vh)`;
+    document.body.style.setProperty("page-height", `calc(${minimumScroll}px + 100vh)`);
     this.adjust();
   }
 }

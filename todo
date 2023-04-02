@@ -1,10 +1,13 @@
 #fixes
+test page-height
 better undefined checking (no if!=undefined everywhere)
 rename variables (no computed everything)
 more length types (rem,cm usw)
 auto deploy
+defaults for start end usw
+better react integration
 
-# after 1.0 
+# 1.x 
 animation types (ease)
 js only approach
 angular test and docs
