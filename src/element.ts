@@ -1,5 +1,5 @@
-import { average } from './misc.js';
-import { scrollHandler } from './scroll-handler.js';
+import { average } from "./misc.js";
+import { scrollHandler } from "./scroll-handler.js";
 
 export enum Attributes {
   CssAttribute = "css-attribute",
@@ -21,7 +21,13 @@ export enum Attributes {
 export type Repeat = "restart" | "continue";
 export type CssAttributes = keyof Omit<
   CSSStyleDeclaration,
-  "length" | "parentRule" | "getPropertyPriority" | "getPropertyValue" | "item" | "removeProperty" | "setProperty"
+  | "length"
+  | "parentRule"
+  | "getPropertyPriority"
+  | "getPropertyValue"
+  | "item"
+  | "removeProperty"
+  | "setProperty"
 >;
 export abstract class ScrollBehaviorElement extends HTMLElement {
   private attributesCache: { [Property in Attributes]?: string | null } = {};
@@ -43,6 +49,7 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   constructor() {
     super();
     scrollHandler.addBehavior(this);
+    this.style.display = "none";
   }
 
   public static get observedAttributes() {
@@ -54,7 +61,9 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     if (this.computedEnd == undefined || this.computedStart == undefined) {
       throw new Error("start and/or end couldn't be computed");
     }
-    return this.computedEnd > this.computedStart ? this.computedEnd : this.computedStart;
+    return this.computedEnd > this.computedStart
+      ? this.computedEnd
+      : this.computedStart;
   }
 
   //end scroll position
@@ -83,27 +92,51 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   }
 
   private get currentValueString(): string {
-    if (this.computedStartValue == undefined || this.computedEndValue == undefined || this.percentage == undefined)
+    if (
+      this.computedStartValue == undefined ||
+      this.computedEndValue == undefined ||
+      this.percentage == undefined
+    )
       throw new Error("values have not been computed");
 
-    if (!Array.isArray(this.computedStartValue) && !Array.isArray(this.computedEndValue)) {
-      return this.preUnit + (this.computedStartValue + this.percentage * (this.computedEndValue - this.computedStartValue)) + this.unit;
+    if (
+      !Array.isArray(this.computedStartValue) &&
+      !Array.isArray(this.computedEndValue)
+    ) {
+      return (
+        this.preUnit +
+        (this.computedStartValue +
+          this.percentage * (this.computedEndValue - this.computedStartValue)) +
+        this.unit
+      );
     }
 
-    if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue))
-      throw new Error("multiple starts and/or multiple ends have not been computed");
-    if (this.computedStartValue.length != this.computedEndValue.length) throw new Error("starts and ends dont have the same length");
-    const currentValues = this.computeMultiValueProgress(this.computedStartValue, this.computedEndValue, this.percentage);
+    if (
+      !Array.isArray(this.computedStartValue) ||
+      !Array.isArray(this.computedEndValue)
+    )
+      throw new Error(
+        "multiple starts and/or multiple ends have not been computed"
+      );
+    if (this.computedStartValue.length != this.computedEndValue.length)
+      throw new Error("starts and ends dont have the same length");
+    const currentValues = this.computeMultiValueProgress(
+      this.computedStartValue,
+      this.computedEndValue,
+      this.percentage
+    );
     return this.multiToSingleValue(currentValues);
   }
 
   private get endValueString(): string {
-    if (!Array.isArray(this.computedEndValue)) return this.preUnit + this.computedEndValue + this.unit;
+    if (!Array.isArray(this.computedEndValue))
+      return this.preUnit + this.computedEndValue + this.unit;
     return this.multiToSingleValue(this.computedEndValue);
   }
 
   private get startValueString(): string {
-    if (!Array.isArray(this.computedStartValue)) return this.preUnit + this.computedStartValue + this.unit;
+    if (!Array.isArray(this.computedStartValue))
+      return this.preUnit + this.computedStartValue + this.unit;
     return this.multiToSingleValue(this.computedStartValue);
   }
 
@@ -118,7 +151,9 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       throw new Error("start and/or end couldn't be computed");
     }
 
-    this.percentage = (this.scrollPosition - this.computedStart) / (this.computedEnd - this.computedStart);
+    this.percentage =
+      (this.scrollPosition - this.computedStart) /
+      (this.computedEnd - this.computedStart);
 
     if (this.repeat == "restart") {
       this.percentage = this.percentage - Math.floor(this.percentage);
@@ -137,14 +172,24 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
     this.setValue(element, this.currentValueString);
   }
 
-  public attributeChangedCallback(name: Attributes, oldValue: string, newValue: string) {
+  public attributeChangedCallback(
+    name: Attributes,
+    oldValue: string,
+    newValue: string
+  ) {
     this.attributesCache[name] = newValue;
   }
 
-  protected computeMultiValueProgress(startValues: number[], endValues: number[], percentage: number): any[] {
+  protected computeMultiValueProgress(
+    startValues: number[],
+    endValues: number[],
+    percentage: number
+  ): any[] {
     const result: number[] = [];
     for (let i = 0; i < startValues.length; i++) {
-      result.push(startValues[i] + percentage * (endValues[i] - startValues[i]));
+      result.push(
+        startValues[i] + percentage * (endValues[i] - startValues[i])
+      );
     }
 
     return result;
@@ -163,13 +208,21 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   }
 
   protected setValue(element: HTMLElement, value: string) {
-    if (this.attributeName != "transform") element.style[this.attributeName] = value;
+    if (this.attributeName != "transform")
+      element.style[this.attributeName] = value;
     else {
       const oldValue: string = element.style["transform"];
-      const transformRegex = new RegExp(`${this.transformFunction}\\s?\\(.*?\\)`);
+      const transformRegex = new RegExp(
+        `${this.transformFunction}\\s?\\(.*?\\)`
+      );
       if (oldValue.match(transformRegex))
-        element.style["transform"] = oldValue.replace(transformRegex, `${this.transformFunction}(${value})`);
-      else element.style["transform"] = oldValue + ` ${this.transformFunction}(${value})`;
+        element.style["transform"] = oldValue.replace(
+          transformRegex,
+          `${this.transformFunction}(${value})`
+        );
+      else
+        element.style["transform"] =
+          oldValue + ` ${this.transformFunction}(${value})`;
     }
   }
 
@@ -206,7 +259,8 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
   protected abstract computeValues(): void;
 
   private averageRange(startValues: number[], endValues: number[]) {
-    if (startValues.length != endValues.length) throw new Error("starts and ends dont have the same length");
+    if (startValues.length != endValues.length)
+      throw new Error("starts and ends dont have the same length");
     const values: number[] = [];
     for (let i = 0; i < startValues.length; i++) {
       values.push(endValues[i] - startValues[i]);
@@ -234,14 +288,27 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart != undefined &&
       this.speed != null
     ) {
-      if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue)) {
-        if (Array.isArray(this.computedStartValue) || Array.isArray(this.computedEndValue)) {
-          throw new Error("start and end have to be both single or both multi values");
+      if (
+        !Array.isArray(this.computedStartValue) ||
+        !Array.isArray(this.computedEndValue)
+      ) {
+        if (
+          Array.isArray(this.computedStartValue) ||
+          Array.isArray(this.computedEndValue)
+        ) {
+          throw new Error(
+            "start and end have to be both single or both multi values"
+          );
         }
 
-        this.computedEnd = this.computedStart + (this.computedEndValue - this.computedStartValue) / +this.speed;
+        this.computedEnd =
+          this.computedStart +
+          (this.computedEndValue - this.computedStartValue) / +this.speed;
       } else {
-        this.computedEnd = this.computedStart + this.averageRange(this.computedStartValue, this.computedEndValue) / +this.speed;
+        this.computedEnd =
+          this.computedStart +
+          this.averageRange(this.computedStartValue, this.computedEndValue) /
+            +this.speed;
       }
     }
     if (
@@ -251,14 +318,27 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.computedStart == undefined &&
       this.speed != null
     ) {
-      if (!Array.isArray(this.computedStartValue) || !Array.isArray(this.computedEndValue)) {
-        if (Array.isArray(this.computedStartValue) || Array.isArray(this.computedEndValue)) {
-          throw new Error("start and end have to be both single or both multi values");
+      if (
+        !Array.isArray(this.computedStartValue) ||
+        !Array.isArray(this.computedEndValue)
+      ) {
+        if (
+          Array.isArray(this.computedStartValue) ||
+          Array.isArray(this.computedEndValue)
+        ) {
+          throw new Error(
+            "start and end have to be both single or both multi values"
+          );
         }
 
-        this.computedStart = this.computedEnd - (this.computedEndValue - this.computedStartValue) / +this.speed;
+        this.computedStart =
+          this.computedEnd -
+          (this.computedEndValue - this.computedStartValue) / +this.speed;
       } else {
-        this.computedStart = this.computedEnd - this.averageRange(this.computedStartValue, this.computedEndValue) / +this.speed;
+        this.computedStart =
+          this.computedEnd -
+          this.averageRange(this.computedStartValue, this.computedEndValue) /
+            +this.speed;
       }
     }
     if (
@@ -269,11 +349,16 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.speed != null
     ) {
       if (!Array.isArray(this.computedStartValue))
-        this.computedEndValue = this.computedStartValue + (this.computedEnd - this.computedStart) * +this.speed;
+        this.computedEndValue =
+          this.computedStartValue +
+          (this.computedEnd - this.computedStart) * +this.speed;
       else {
         this.computedEndValue = [];
         for (let i = 0; i < this.computedStartValue.length; i++) {
-          this.computedEndValue.push(this.computedStartValue[i] + (this.computedEnd - this.computedStart) * +this.speed);
+          this.computedEndValue.push(
+            this.computedStartValue[i] +
+              (this.computedEnd - this.computedStart) * +this.speed
+          );
         }
       }
     }
@@ -285,11 +370,16 @@ export abstract class ScrollBehaviorElement extends HTMLElement {
       this.speed != null
     ) {
       if (!Array.isArray(this.computedEndValue))
-        this.computedStartValue = this.computedEndValue - (this.computedEnd - this.computedStart) * +this.speed;
+        this.computedStartValue =
+          this.computedEndValue -
+          (this.computedEnd - this.computedStart) * +this.speed;
       else {
         this.computedStartValue = [];
         for (let i = 0; i < this.computedEndValue.length; i++) {
-          this.computedStartValue.push(this.computedEndValue[i] - (this.computedEnd - this.computedStart) * +this.speed);
+          this.computedStartValue.push(
+            this.computedEndValue[i] -
+              (this.computedEnd - this.computedStart) * +this.speed
+          );
         }
       }
     }
